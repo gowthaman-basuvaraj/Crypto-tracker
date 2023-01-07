@@ -60,18 +60,25 @@ const CoinTable = () => {
 
 
     const handleSearch = () => {
+        let data = [...coins].sort((a, b) => {
+            let first = sort ? a.price_change_percentage_24h : b.price_change_percentage_24h
+            let second = sort ? b.price_change_percentage_24h : a.price_change_percentage_24h
+
+            if (first > second) return 1
+            else return -1
+        })
         if (search.length === 0) {
-            console.log('search', search,  'all results')
-            setSearchResult(coins)
+            console.log('search', search, 'all results')
+            setSearchResult(data)
         } else {
             let searchLC = search.toLowerCase()
 
-            setSearchResult(coins.filter((coin) =>
+            setSearchResult(data.filter((coin) =>
                 coin.name.toLowerCase().indexOf(searchLC) > -1 ||
                 coin.symbol.toLowerCase().indexOf(searchLC) > -1
             ))
 
-            console.log('search', search,  'some results', searchResult.length)
+            console.log('search', search, 'some results', searchResult.length)
 
         }
     }
@@ -84,15 +91,6 @@ const CoinTable = () => {
             setLoading(true);
 
             const {data} = await axios.get(CoinList(currency));
-
-
-            data.sort((a, b) => {
-                let first = sort ? a.price_change_percentage_24h : b.price_change_percentage_24h
-                let second = sort ? b.price_change_percentage_24h : a.price_change_percentage_24h
-
-                if (first > second) return 1
-                else return -1
-            })
 
             setCoins(data)
             setSearchResult(data)
